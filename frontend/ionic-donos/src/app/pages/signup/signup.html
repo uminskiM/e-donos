@@ -17,14 +17,16 @@
     <ion-list lines="none">
       <ion-item>
         <ion-label position="stacked" color="primary">Nazwa użytkownika</ion-label>
-        <ion-input [(ngModel)]="signup.username" name="username" type="text" #username="ngModel" required>
+        <ion-input [(ngModel)]="signup.email" name="username" type="text" #email="ngModel" required>
         </ion-input>
       </ion-item>
       <ion-text color="danger">
-        <p [hidden]="username.valid || submitted === false" class="ion-padding-start">
+        <p [hidden]="email.valid || submitted === false" class="ion-padding-start">
           Nazwa użytkownika
         </p>
       </ion-text>
+
+      
 
       <ion-item>
         <ion-label position="stacked" color="primary">Hasło</ion-label>
