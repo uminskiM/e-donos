@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.conf import settings
 
 class Spot(models.Model):
 
@@ -17,7 +17,6 @@ class Spot(models.Model):
         USZKODZONE_OSWIETLENIE = 'BROKEN_LIGHTS'
         ZAROSNIETE_KRZAKAMI = 'BUSH'
 
-    id = models.UUIDField
     latitude = models.DecimalField
     longitude = models.DecimalField
     category = models.CharField(
@@ -28,6 +27,6 @@ class Spot(models.Model):
         max_length=512
     )
     photo = models.CharField
-    reporter_id = models.UUIDField
+    reporter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
 
 
