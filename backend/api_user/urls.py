@@ -8,7 +8,6 @@ from . import views
 router = routers.DefaultRouter()
 router.register('user', views.UserViewSet)
 
-
 urlpatterns = [
     path(r'', include(router.urls)),
     path(r'login/', jwt_views.TokenObtainPairView.as_view(), name='token_create'), 
