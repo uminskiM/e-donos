@@ -1,0 +1,7 @@
+{
+  "name": "ionic-donos-app",
+  "type": "angular",
+  "integrations": {
+    "cordova": {}
+  }
+}
