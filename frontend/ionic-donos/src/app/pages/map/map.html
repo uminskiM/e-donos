@@ -3,9 +3,40 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="openLayers()">
+        <ion-icon slot="end" name="layers"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>Map</ion-title>
   </ion-toolbar>
 </ion-header>
+
+<ion-menu side="end" menuId="menuLayers" contentId="layers">
+  <ion-header>
+    <ion-toolbar color="danger">
+      <ion-title>Warstwy</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list>
+      <ion-item>
+        <ion-label>Warstwa 1</ion-label>
+        <ion-checkbox slot="start"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Warstwa 2</ion-label>
+        <ion-checkbox slot="start"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Warstwa 3</ion-label>
+        <ion-checkbox slot="start"></ion-checkbox>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<ion-router-outlet id="layers"></ion-router-outlet>
 
 <ion-content>
   <div id="map" class="map"></div>
