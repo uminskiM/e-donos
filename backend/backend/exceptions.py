@@ -1,10 +1,6 @@
-import logging
-from rest_framework import status
-
-from rest_framework.views import exception_handler
-from django.http import JsonResponse
-from psycopg2.errors import UniqueViolation
 from django.db.utils import IntegrityError
+from django.http import JsonResponse
+from rest_framework.views import exception_handler
 
 
 def app_exception_handler(exc, context):
