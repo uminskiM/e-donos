@@ -36,7 +36,6 @@ export class MapService {
 
   map!: Map;
 
-  coordinatesOnClickEvent!: { (evt: any): void; (evt: MapBrowserEvent<UIEvent>): void; };
   isLayerFeatureSelectable = false;
 
   selectInteraction: any

@@ -1,7 +1,10 @@
 .map {
-  height: 100%;
   width: 100%;
-  //z-index: 11001;
+  height:100%;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+
 }
 .show-map {
   opacity: 1;
