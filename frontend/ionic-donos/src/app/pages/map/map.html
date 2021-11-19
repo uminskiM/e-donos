@@ -1,14 +1,26 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar *ngIf="!addReportMode">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
+      <ion-button (click)="addReport()">
+        <ion-icon slot="end" name="add-outline"></ion-icon>
+      </ion-button>
       <ion-button (click)="openLayers()">
         <ion-icon slot="end" name="layers"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>Map</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar *ngIf="addReportMode">
+    <ion-buttons slot="end">
+      <ion-button (click)="cancelAddReport()">
+        <ion-icon slot="end" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Wybierz punkt na mapie</ion-title>
   </ion-toolbar>
 </ion-header>
 

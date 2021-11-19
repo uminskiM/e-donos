@@ -1,5 +1,5 @@
 import { Component, ElementRef, Inject, ViewChild, AfterViewInit } from '@angular/core';
-import { MenuController, Platform } from '@ionic/angular';
+import { MenuController, ModalController, Platform } from '@ionic/angular';
 import { DOCUMENT } from '@angular/common';
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -10,6 +10,24 @@ import { register } from 'ol/proj/proj4';
 import Projection from 'ol/proj/Projection';
 import proj4 from 'proj4';
 
+import LayerGroup from 'ol/layer/Group';
+import ImageLayer from 'ol/layer/Image';
+import ImageWMS from 'ol/source/ImageWMS';
+import VectorSource from 'ol/source/Vector';
+import VectorLayer from 'ol/layer/Vector';
+import GeoJSON from 'ol/format/GeoJSON';
+import {
+  Circle as CircleStyle,
+  Fill,
+  Stroke,
+  Style,
+  Text,
+} from 'ol/style';
+import Feature from 'ol/Feature';
+import Point from 'ol/geom/Point';
+import { modalController } from '@ionic/core';
+import { ReportModal } from './report-modal/report-modal';
+
 
 @Component({
   selector: 'page-map',
@@ -18,10 +36,17 @@ import proj4 from 'proj4';
 })
 export class MapPage implements AfterViewInit {
 
-  public map: Map;
+  map: any;
+  addReportModal: any;
+
+  addReportMode = false;
+
+  public POINT_LAYER: any;
+  coordinatesOnClickEvent: (evt: any) => void;
 
   constructor(
     private menu: MenuController,
+    private modalController: ModalController,
     public platform: Platform,
     private mediaObserver: MediaObserver
   ) { }
@@ -64,12 +89,105 @@ export class MapPage implements AfterViewInit {
 
      });
 
+
   }
 
   openLayers() {
     console.log("open layers")
     this.menu.open("menuLayers")
   }
+
+  addPointLayer(coords: [number, number]) {
+    this.map.removeLayer(this.POINT_LAYER)
+
+    
+    var feature = new Feature(new Point(coords))
+    var source = new VectorSource({
+      features: [feature],
+    });
+
+    this.POINT_LAYER = new VectorLayer({
+      source: source,
+      //style: style,
+      zIndex: 1005
+    });
+
+
+    this.POINT_LAYER.setStyle(new Style({
+      image: new CircleStyle({
+        radius: 8,
+        stroke: new Stroke({
+          color: '#8B0000',
+        }),
+        fill: new Fill({
+          color: '#000',
+        })
+      })
+    }));
+
+    this.map.addLayer(this.POINT_LAYER)
+
+  }
+
+  addReport(){
+    this.addReportMode = true;
+    this.activateCoordinatesOnClick()
+
+    
+  }
+
+  cancelAddReport(){
+    this.addReportMode = false;
+    this.deactivateCoordinatesOnClick()
+    this.map.removeLayer(this.POINT_LAYER)
+  }
+
+  activateCoordinatesOnClick() {
+    this.map.on('singleclick', this.coordinatesOnClickEvent = (evt: any) => {
+      //this.setCurrentViewResolution(this.map.getView().getResolution())
+      /* TO IMPROVE:  waits to decide if layer feature is selected */
+
+      setTimeout(() => {
+        if (1===1) {
+          this.addPointLayer(evt.coordinate)
+        }
+      }, 100);
+
+    })
+  }
+
+  deactivateCoordinatesOnClick() {
+    if (this.coordinatesOnClickEvent) {
+      this.map.un('singleclick', this.coordinatesOnClickEvent)
+    }
+  }
+
+  onChangeFileInput(){
+
+  }
+
+  onClickFileInputButton(){
+
+  }
+
+  async presentReportModal() {
+    const modal = await this.modalController.create({
+      component: ReportModal,
+      cssClass: "report-modal",
+      componentProps: {
+
+      }
+    });
+
+    modal.onDidDismiss().then((dataReturned) => {
+      console.log(dataReturned)
+    })
+
+    return await modal.present();
+  }
+
+  
+  
 }
 
 

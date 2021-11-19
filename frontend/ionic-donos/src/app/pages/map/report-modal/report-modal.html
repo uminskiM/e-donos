@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-title>Dodaj zgłoszenie</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content fullscreen>
+
+  <ion-list lines="full" class="ion-no-margin ion-no-padding">
+      <ion-item>
+        <ion-label position="stacked">Opis</ion-label>
+        <ion-textarea #txtNote value=""></ion-textarea> 
+    </ion-item>
+
+    <ion-item>
+      <img width="300"  [src]="pictureUrl" >
+    </ion-item>
+
+    <ion-item>
+      <input type="file" style="display: none" #fileInput accept="image/*" (change)="onChangeFileInput()" />
+      <ion-button expand="block" type="submit" class="ion-no-margin" (click)="onClickFileInputButton()" >Wczytaj zdjęcie</ion-button>
+    </ion-item>
+
+  </ion-list>
+
+  <div class="ion-padding">
+
+    <ion-grid>
+      <ion-row>
+        <ion-col text-center>
+          <ion-button expand="block" type="submit" class="ion-no-margin" (click)="dismiss()">Anuluj</ion-button>
+        </ion-col>
+        <ion-col text-center>
+          <ion-button expand="block" type="submit" class="ion-no-margin" (click)="ok()" >OK</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+</ion-content>
