@@ -3,6 +3,7 @@ import { Platform } from '@ionic/angular';
 import { DOCUMENT} from '@angular/common';
 
 import { darkStyle } from './map-dark-style';
+import { MapService } from '../../services/map.service';
 
 @Component({
   selector: 'page-map',
@@ -13,15 +14,18 @@ export class MapPage implements AfterViewInit {
 
   constructor(
     @Inject(DOCUMENT) private doc: Document,
-    public platform: Platform) {}
+    public platform: Platform,
+    private mapService: MapService) {}
 
-  async ngAfterViewInit() {
+  ngAfterViewInit() {
     const appEl = this.doc.querySelector('ion-app');
     let isDark = false;
     let style = [];
     if (appEl.classList.contains('dark-theme')) {
       style = darkStyle;
     }
+
+    this.mapService.updateSize()
 
 
     let map;
