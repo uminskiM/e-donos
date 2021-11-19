@@ -11,8 +11,12 @@ class User(TimeStampMixin, AbstractBaseUser, PermissionsMixin):
     """ Ovveride base user model.
     """
 
+
     name = models.CharField(max_length = 250)
+    surname = models.CharField(max_length = 250)
     email = models.EmailField(max_length = 250, unique = True)
+
+    is_official = models.BooleanField(default=False)
     is_active = models.BooleanField(default = True)
     is_staff = models.BooleanField(default = False)
 

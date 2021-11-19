@@ -15,19 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.conf.urls import url
-from rest_framework_swagger.views import get_swagger_view
-from rest_framework.documentation import include_docs_urls
-from rest_framework.permissions import AllowAny, IsAdminUser
-from django.conf import settings
-from rest_framework_swagger.views import get_swagger_view
 
-schema_view = get_swagger_view(title='Pastebin API')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('', include('api_user.urls')),
-    path('', include('spots.urls')),
-    url(r'docs/', schema_view)
+    path('', include('spots.urls'))
 ]
