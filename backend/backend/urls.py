@@ -28,5 +28,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('', include('api_user.urls')),
+    path('', include('spots.urls')),
     url(r'docs/', schema_view)
 ]
