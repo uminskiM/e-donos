@@ -29,13 +29,17 @@ export class ReportModal implements AfterViewInit {
   }
 
   ok(){
-    this.modalController.dismiss({
-      "test": "test"
-    })
+    this.modalController.dismiss(
+      {},
+      "ok"
+    )
   }
 
   dismiss(){
-    this.modalController.dismiss()
+    this.modalController.dismiss(
+      {},
+      "cancel"
+    )
   }
 
   onChangeFileInput(){

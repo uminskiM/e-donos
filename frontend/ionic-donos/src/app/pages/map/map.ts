@@ -38,8 +38,9 @@ export class MapPage implements AfterViewInit {
 
   map: any;
   addReportModal: any;
-
   addReportMode = false;
+  isPointSelected = false;
+  currentCoords = [0, 0]
 
   public POINT_LAYER: any;
   coordinatesOnClickEvent: (evt: any) => void;
@@ -99,7 +100,7 @@ export class MapPage implements AfterViewInit {
 
   addPointLayer(coords: [number, number]) {
     this.map.removeLayer(this.POINT_LAYER)
-
+    this.isPointSelected = true;
     
     var feature = new Feature(new Point(coords))
     var source = new VectorSource({
@@ -126,33 +127,59 @@ export class MapPage implements AfterViewInit {
     }));
 
     this.map.addLayer(this.POINT_LAYER)
+  }
 
+  addReportPoint(coords: [number, number]) {
+    
+    var feature = new Feature(new Point(coords))
+    var source = new VectorSource({
+      features: [feature],
+    });
+
+    var point = new VectorLayer({
+      source: source,
+      //style: style,
+      zIndex: 1005
+    });
+
+
+    point.setStyle(new Style({
+      image: new CircleStyle({
+        radius: 8,
+        stroke: new Stroke({
+          color: '#6b7078',
+        }),
+        fill: new Fill({
+          color: '#428af5',
+        })
+      })
+    }));
+
+    this.map.addLayer(point)
   }
 
   addReport(){
     this.addReportMode = true;
-    this.activateCoordinatesOnClick()
+    this.activateCoordinatesOnClick() 
+  }
 
-    
+  confirmAddReport(){
+    this.presentReportModal()
+    this.isPointSelected = false;
+
   }
 
   cancelAddReport(){
     this.addReportMode = false;
+    this.isPointSelected = false;
     this.deactivateCoordinatesOnClick()
     this.map.removeLayer(this.POINT_LAYER)
   }
 
   activateCoordinatesOnClick() {
     this.map.on('singleclick', this.coordinatesOnClickEvent = (evt: any) => {
-      //this.setCurrentViewResolution(this.map.getView().getResolution())
-      /* TO IMPROVE:  waits to decide if layer feature is selected */
-
-      setTimeout(() => {
-        if (1===1) {
-          this.addPointLayer(evt.coordinate)
-        }
-      }, 100);
-
+      this.currentCoords = evt.coordinate
+      this.addPointLayer(evt.coordinate)
     })
   }
 
@@ -180,7 +207,12 @@ export class MapPage implements AfterViewInit {
     });
 
     modal.onDidDismiss().then((dataReturned) => {
-      console.log(dataReturned)
+      if(dataReturned.role === "ok") {
+        this.addReportPoint(this.currentCoords as [number, number])
+        this.cancelAddReport()
+      } else if (dataReturned.role === "cancel") {
+        this.cancelAddReport()
+      }
     })
 
     return await modal.present();

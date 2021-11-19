@@ -15,9 +15,14 @@
   </ion-toolbar>
 
   <ion-toolbar *ngIf="addReportMode">
-    <ion-buttons slot="end">
+    <ion-buttons slot="start">
       <ion-button (click)="cancelAddReport()">
-        <ion-icon slot="end" name="close-outline"></ion-icon>
+        <ion-icon slot="end" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons *ngIf="isPointSelected" slot="end">
+      <ion-button (click)="confirmAddReport()">
+        <ion-icon slot="end" name="checkmark-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>Wybierz punkt na mapie</ion-title>
