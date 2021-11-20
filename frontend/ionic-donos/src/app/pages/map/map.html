@@ -38,7 +38,7 @@
   <ion-content>
     <ion-list>
       <ion-item *ngFor="let layer of legendLayers">
-        <ion-label>{{ layer.name }}  {{layer.checked}} </ion-label>
+        <ion-label>{{ layer.name }}</ion-label>
         <ion-checkbox slot="start" [checked]="layer.checked" (ionChange)=layerStatusChanged(layer)></ion-checkbox>
       </ion-item>
     </ion-list>
