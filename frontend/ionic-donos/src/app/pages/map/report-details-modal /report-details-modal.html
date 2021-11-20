@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-title>Szczegóły zgłoszenia</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content fullscreen>
+
+  <ion-list lines="full">
+    <ion-item>
+      <div class="title">
+        Dziura na drodze <br>
+        <span>Uszkodzona droga</span>
+      </div>
+    </ion-item>
+
+    <ion-item>
+      <div class="description">
+        Na ulicy dasdlkasjklasfklsm droga jest zła lskadaslkfj naslkfnslak
+      </div>
+      <br>
+    </ion-item>
+  </ion-list>
+
+  <div class="ion-padding">
+    <ion-grid>
+      <ion-row>
+        <ion-col text-center>
+          <img id="photo" width="300" [src]="pictureUrl">
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <div class="ion-padding">
+    <ion-grid>
+      <ion-row>
+        <ion-col text-center>
+          <ion-button expand="block" type="submit" (click)="ok()">OK</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+</ion-content>

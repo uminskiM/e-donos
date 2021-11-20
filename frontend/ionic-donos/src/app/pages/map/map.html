@@ -1,14 +1,31 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar *ngIf="!addReportMode">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
+      <ion-button (click)="addReport()">
+        <ion-icon slot="end" name="add-outline"></ion-icon>
+      </ion-button>
       <ion-button (click)="openLayers()">
         <ion-icon slot="end" name="layers"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>Map</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar *ngIf="addReportMode">
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelAddReport()">
+        <ion-icon slot="end" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons *ngIf="isPointSelected" slot="end">
+      <ion-button (click)="confirmAddReport()">Potwierdź
+        <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Wybierz punkt na mapie</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -40,4 +57,19 @@
 
 <ion-content>
   <div id="map" class="map"></div>
+  <div #popup class="ol-popup">
+    <div #popupContent id="popup-content">
+      <div class="title">
+        Dziura na drodze <br>
+        <span>Uszkodzona droga</span>
+      </div>
+
+      <br>
+      <ion-button (click)="presentReportDetailsModal()">Szczegóły
+        <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+      </ion-button>
+
+
+    </div>
+  </div>
 </ion-content>

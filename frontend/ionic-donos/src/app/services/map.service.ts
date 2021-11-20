@@ -131,5 +131,7 @@ export class MapService {
   refreshMap() {
     setTimeout(() => { this.map.updateSize(); }, 100);
   }
+
+  
 }
 
