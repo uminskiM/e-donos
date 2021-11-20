@@ -1,5 +1,8 @@
 
 export interface UserOptions {
-  username: string;
+  email: string;
+  name: string;
+  surname: string;
   password: string;
+  is_official: Boolean;
 }
