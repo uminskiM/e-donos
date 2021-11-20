@@ -17,8 +17,8 @@ class Spot(models.Model):
         USZKODZONE_OSWIETLENIE = 'BROKEN_LIGHTS'
         ZAROSNIETE_KRZAKAMI = 'BUSH'
 
-    latitude = models.DecimalField
-    longitude = models.DecimalField
+    latitude = models.FloatField()
+    longitude = models.FloatField()
     category = models.CharField(
         max_length=256,
         choices=SpotCategory.choices

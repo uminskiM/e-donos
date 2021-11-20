@@ -15,7 +15,7 @@ urlpatterns = [
     path(r'login/', jwt_views.TokenObtainPairView.as_view(), name='token_create'), 
     path(r'login/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path(r'docs/', include_docs_urls(
-        title='Bfpaas-Sora Api',
+        title='E-Donos api',
         permission_classes = [AllowAny]
     ))
 ]

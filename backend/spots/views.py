@@ -12,3 +12,11 @@ class SpotsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return super().get_queryset()
+
+
+    def perform_create(self, serializer):
+        serializer.save(reporter = self.request.user)
+
+
+    def perform_update(self, serializer):
+        serializer.save(reporter = self.request.user)

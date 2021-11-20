@@ -10,5 +10,7 @@ class SpotSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Spot
-        fields = ['latitude', 'longitude', 'category', 'comment']
+        fields = ['latitude', 'longitude', 'category', 'comment', 'id']
+        read_only_fields = ('id',)
+        
 
