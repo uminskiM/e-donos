@@ -10,8 +10,11 @@ class SpotsViewSet(viewsets.ModelViewSet):
     queryset = Spot.objects.all()
     serializer_class = SpotSerializer
 
+
     def get_queryset(self):
-        return super().get_queryset()
+        if self.action in {'list'}:
+            return super().get_queryset()
+        return super().get_queryset().filter(reporter = self.request.user)
 
 
     def perform_create(self, serializer):
@@ -20,3 +23,6 @@ class SpotsViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save(reporter = self.request.user)
+
+
+    

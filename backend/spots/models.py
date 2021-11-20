@@ -26,7 +26,8 @@ class Spot(models.Model):
     comment = models.CharField(
         max_length=512
     )
-    photo = models.CharField
+    photo = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add = True)
     reporter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
 
 
