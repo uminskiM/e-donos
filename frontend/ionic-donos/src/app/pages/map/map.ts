@@ -310,7 +310,7 @@ export class MapPage implements AfterViewInit {
     this.addWmsLayer('https://wody.isok.gov.pl/gpservices/KZGW/MRP20_SkutkiZycieZdrowiePotencjalneStraty_WysokiePrawdopodPowodzi/MapServer/WMSServer', { name: "Obszary szczelnego ryzyka", wmsName: "4", visible: true, version: "1.1.1"})
     this.addWmsLayer('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaUzbrojeniaTerenu', { name: "Uzbrojenia", wmsName: "przewod_pozostale,przewod_naftowy,przewod_elektroenergetyczny,przewod_telekomunikacyjny,przewod_gazowy,przewod_cieplowniczy,przewod_kanalizacyjny,przewod_wodociagowy,przewod_urzadzenia,przewod_slupy,przewod_inny,przewod_benzynowy", visible: true, version: "1.3.0"})
     this.addWmsLayer('https://wody.isok.gov.pl/gpservices/KZGW/MRP20_SkutkiZycieZdrowiePotencjalneStraty_WysokiePrawdopodPowodzi/MapServer/WMSServer', { name: "Ryzyko powodziowe", wmsName: "1", visible: true, version: "1.1.1"})
-    this.addWmsLayer('https://mapy.geoportal.gov.pl/wss/ext/KrajowaIntegracjaMiejscowychPlanowZagospodarowaniaPrzestrzennego', { name: "MPZP", wmsName: "plany,raster,wektor-str,wektor-lzb,wektor-pow,wektor-lin,wektor-pkt,granice", visible: true, version: "1.3.0"})
+    this.addWmsLayer('https://mapy.geoportal.gov.pl/wss/ext/KrajowaIntegracjaMiejscowychPlanowZagospodarowaniaPrzestrzennego', { name: "MPZP", wmsName: "plany,raster,wektor-str,wektor-lzb,wektor-pow,wektor-lin,wektor-pkt,granice", visible: true, version: "1.1.0"})
 
 
     let wmsLayerGroup = new LayerGroup({
@@ -332,6 +332,7 @@ export class MapPage implements AfterViewInit {
           'FORMAT': "image/png",
           'VERSION': layerParams.version,
           "LAYERS": layerParams.wmsName,
+          "CRS":"EPSG:2180"
         }
       }),
       visible: layerParams.visible,
