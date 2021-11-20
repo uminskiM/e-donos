@@ -37,17 +37,9 @@
   </ion-header>
   <ion-content>
     <ion-list>
-      <ion-item>
-        <ion-label>Warstwa 1</ion-label>
-        <ion-checkbox slot="start"></ion-checkbox>
-      </ion-item>
-      <ion-item>
-        <ion-label>Warstwa 2</ion-label>
-        <ion-checkbox slot="start"></ion-checkbox>
-      </ion-item>
-      <ion-item>
-        <ion-label>Warstwa 3</ion-label>
-        <ion-checkbox slot="start"></ion-checkbox>
+      <ion-item *ngFor="let layer of legendLayers">
+        <ion-label>{{ layer.name }}  {{layer.checked}} </ion-label>
+        <ion-checkbox slot="start" [checked]="layer.checked" (ionChange)=layerStatusChanged(layer)></ion-checkbox>
       </ion-item>
     </ion-list>
   </ion-content>
