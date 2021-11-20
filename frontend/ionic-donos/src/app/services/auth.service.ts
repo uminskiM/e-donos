@@ -5,8 +5,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { LocalStorageService } from '../services/local-storage.service';
 import { tap, catchError, map, mapTo } from 'rxjs/operators';
 import { BehaviorSubject, of as observableOf } from 'rxjs';
-
-
+import { catchError, tap } from 'rxjs/operators';
 
 import { UserOptions } from '../interfaces/user-options';
 @Injectable({
@@ -27,6 +26,7 @@ export class AuthService {
         headers: new HttpHeaders({'Content-Type': 'application/json'})
       };
     }
+
 
 
   createUser(user: UserOptions): Observable<any> {
@@ -74,6 +74,13 @@ export class AuthService {
 
   postLogin(user: any): Observable<any> {
     return this.httpClient.post<any>(`${this.endpoint}/login/`, JSON.stringify(user), this._httpOptions)
+      .pipe(
+        catchError(this.handleError<UserOptions>('Error occured'))
+      );
+  }
+
+  postLogin(user: any): Observable<any> {
+    return this.httpClient.post<any>('http://localhost:8000/login/', JSON.stringify(user), this.httpOptions)
       .pipe(
         catchError(this.handleError<UserOptions>('Error occured'))
       );

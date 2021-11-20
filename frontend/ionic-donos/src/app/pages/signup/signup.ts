@@ -14,10 +14,10 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./signup.scss'],
 })
 export class SignupPage {
-  signup: UserOptions = { email: '',
-   name: '',
-   surname: '',
-   password: '',
+  signup: UserOptions = { email: 'daiwdwda@oneeee.pl',
+   name: 'dadadadwdawd',
+   surname: 'wtawtatatt',
+   password: 'dawdiawjdaoda',
    is_official: false };
   submitted = false;
 
