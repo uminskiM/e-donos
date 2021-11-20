@@ -61,6 +61,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   popupOverlay: any;
   legendLayers = WmsLayersLegend
   wmsLayers = WmsLayers
+  ortofotoLayerVisibility = true;
 
   @ViewChild('popup')
   popupElem!: ElementRef;
@@ -77,7 +78,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   ) { }
 
   ngAfterViewInit() {
-    
+
     proj4.defs("EPSG:2180", "+axis=neu +proj=tmerc +lat_0=0 +lon_0=19 +k=0.9993 +x_0=500000 +y_0=-5300000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 
     register(proj4);
@@ -114,7 +115,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
       this.map.addOverlay(this.popupOverlay)
 
-      if (WmsLayers.length === 0){
+      if (WmsLayers.length === 0) {
         this.initializeWmsLayers()
       }
 
@@ -134,7 +135,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-  
+
   }
 
   openLayers() {
@@ -318,7 +319,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   /* WMS */
 
   initializeWmsLayers() {
-    
+
 
     this.addWmsLayer('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow', { name: "EGIB", wmsName: "obreby,geoportal,uzytki,dzialki,numery_dzialek,budynki,kontury", visible: false, version: "1.1.0" })
     this.addWmsLayer('https://wody.isok.gov.pl/gpservices/KZGW/MRP20_SkutkiZycieZdrowiePotencjalneStraty_WysokiePrawdopodPowodzi/MapServer/WMSServer', { name: "Obszary szczelnego ryzyka", wmsName: "4", visible: false, version: "1.1.1" })
@@ -346,7 +347,6 @@ export class MapPage implements AfterViewInit, OnDestroy {
           'FORMAT': "image/png",
           'VERSION': layerParams.version,
           "LAYERS": layerParams.wmsName,
-          "CRS": "EPSG:2180"
         }
       }),
       visible: layerParams.visible,
@@ -383,13 +383,21 @@ export class MapPage implements AfterViewInit, OnDestroy {
         var myLayer = new TileLayer({
           source: mySource,
           preload: Infinity,
+          visible: this.ortofotoLayerVisibility
         })
         myLayer.setZIndex(0)
-        //this.map.addLayer(myLayer)
+        this.map.addLayer(myLayer)
         //WmsLayers.push(myLayer)
         //WmsLayersLegend.push()           
       }
     });
+  }
+
+  ortofotoStatusChanged() {
+    this.ortofotoLayerVisibility = !this.ortofotoLayerVisibility
+    this.map.getLayers().array_[2].values_.visible = this.ortofotoLayerVisibility
+    this.map.updateSize()
+
   }
 
   layerStatusChanged(layer: any) {
