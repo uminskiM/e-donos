@@ -21,8 +21,8 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons *ngIf="isPointSelected" slot="end">
-      <ion-button (click)="confirmAddReport()">
-        <ion-icon slot="end" name="checkmark-outline"></ion-icon>
+      <ion-button (click)="confirmAddReport()">Potwierdź
+        <ion-icon slot="start" name="checkmark-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>Wybierz punkt na mapie</ion-title>
@@ -57,4 +57,19 @@
 
 <ion-content>
   <div id="map" class="map"></div>
+  <div #popup class="ol-popup">
+    <div #popupContent id="popup-content">
+      <div class="title">
+        Dziura na drodze <br>
+        <span>Uszkodzona droga</span>
+      </div>
+
+      <br>
+      <ion-button (click)="presentReportDetailsModal()">Szczegóły
+        <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+      </ion-button>
+
+
+    </div>
+  </div>
 </ion-content>

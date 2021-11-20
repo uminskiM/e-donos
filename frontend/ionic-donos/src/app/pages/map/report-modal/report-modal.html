@@ -9,18 +9,33 @@
 <ion-content fullscreen>
 
   <ion-list lines="full" class="ion-no-margin ion-no-padding">
-      <ion-item>
-        <ion-label position="stacked">Opis</ion-label>
-        <ion-textarea #txtNote value=""></ion-textarea> 
+
+    <ion-item>
+      <ion-label position="stacked">Tytuł zgłoszenia</ion-label>
+      <ion-input value=""></ion-input>
     </ion-item>
 
     <ion-item>
-      <img width="300"  [src]="pictureUrl" >
+      <ion-label position="stacked">Opis</ion-label>
+      <ion-textarea value=""></ion-textarea>
     </ion-item>
 
     <ion-item>
+      <ion-label position="stacked">Rodzaj zgłoszenia</ion-label>
+      <ion-select placeholder="Wybierz...">
+        <ion-select-option value="f">Female</ion-select-option>
+        <ion-select-option value="m">Male</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item lines="none">
+      <img width="300" [src]="pictureUrl">
+    </ion-item>
+
+    <ion-item lines="none">
       <input type="file" style="display: none" #fileInput accept="image/*" (change)="onChangeFileInput()" />
-      <ion-button expand="block" type="submit" class="ion-no-margin" (click)="onClickFileInputButton()" >Wczytaj zdjęcie</ion-button>
+      <ion-button expand="block" type="submit" class="ion-no-margin" (click)="onClickFileInputButton()">Wczytaj zdjęcie
+      </ion-button>
     </ion-item>
 
   </ion-list>
@@ -33,7 +48,7 @@
           <ion-button expand="block" type="submit" class="ion-no-margin" (click)="dismiss()">Anuluj</ion-button>
         </ion-col>
         <ion-col text-center>
-          <ion-button expand="block" type="submit" class="ion-no-margin" (click)="ok()" >OK</ion-button>
+          <ion-button expand="block" type="submit" class="ion-no-margin" (click)="ok()">OK</ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>

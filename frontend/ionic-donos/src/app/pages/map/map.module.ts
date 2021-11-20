@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { MapPage } from './map';
 import { MapPageRoutingModule } from './map-routing.module';
 import { ReportModal } from './report-modal/report-modal';
+import { ReportDetailsModal } from './report-details-modal /report-details-modal';
 
 @NgModule({
   imports: [
@@ -14,7 +15,8 @@ import { ReportModal } from './report-modal/report-modal';
   ],
   declarations: [
     MapPage,
-    ReportModal
+    ReportModal,
+    ReportDetailsModal
   ]
 })
 export class MapModule { }

@@ -5,7 +5,7 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
-import {MediaChange, MediaObserver} from '@angular/flex-layout';
+import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { register } from 'ol/proj/proj4';
 import Projection from 'ol/proj/Projection';
 import proj4 from 'proj4';
@@ -27,6 +27,10 @@ import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import { modalController } from '@ionic/core';
 import { ReportModal } from './report-modal/report-modal';
+import Select from 'ol/interaction/Select';
+import { click } from 'ol/events/condition';
+import Overlay from 'ol/Overlay';
+import { ReportDetailsModal } from './report-details-modal /report-details-modal';
 
 
 @Component({
@@ -44,6 +48,14 @@ export class MapPage implements AfterViewInit {
 
   public POINT_LAYER: any;
   coordinatesOnClickEvent: (evt: any) => void;
+  selectInteraction: any;
+  popupOverlay: any;
+
+  @ViewChild('popup')
+  popupElem!: ElementRef;
+
+  @ViewChild('popupContent')
+  popupContent!: ElementRef;
 
   constructor(
     private menu: MenuController,
@@ -53,7 +65,7 @@ export class MapPage implements AfterViewInit {
   ) { }
 
   ngAfterViewInit() {
-    
+
     proj4.defs('EPSG:2180',
       '+proj=tmerc +lat_0=0 +lon_0=19 +k=0.9993 +x_0=500000 +y_0=-5300000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
     register(proj4);
@@ -64,7 +76,7 @@ export class MapPage implements AfterViewInit {
         934796.39, 887948.56],
 
     });
-  
+
     setTimeout(() => {
       this.map = new Map({
         view: new View({
@@ -79,16 +91,28 @@ export class MapPage implements AfterViewInit {
         ],
         target: 'map'
       })
+
+      this.popupOverlay = new Overlay({
+        element: this.popupElem.nativeElement,
+        autoPan: true,
+        autoPanAnimation: {
+          duration: 250,
+        },
+      });
+
+      this.map.addOverlay(this.popupOverlay)
+
+      this.activateLayerFeatureSelection()
     }, 500);
 
 
     this.mediaObserver.media$.subscribe((change: MediaChange) => {
       // console.log(change);
-       setTimeout(() => {
-          this.map?.updateSize();
-       }, 400); 
+      setTimeout(() => {
+        this.map?.updateSize();
+      }, 400);
 
-     });
+    });
 
 
   }
@@ -101,7 +125,7 @@ export class MapPage implements AfterViewInit {
   addPointLayer(coords: [number, number]) {
     this.map.removeLayer(this.POINT_LAYER)
     this.isPointSelected = true;
-    
+
     var feature = new Feature(new Point(coords))
     var source = new VectorSource({
       features: [feature],
@@ -130,7 +154,7 @@ export class MapPage implements AfterViewInit {
   }
 
   addReportPoint(coords: [number, number]) {
-    
+
     var feature = new Feature(new Point(coords))
     var source = new VectorSource({
       features: [feature],
@@ -158,21 +182,24 @@ export class MapPage implements AfterViewInit {
     this.map.addLayer(point)
   }
 
-  addReport(){
+  addReport() {
     this.addReportMode = true;
-    this.activateCoordinatesOnClick() 
+    this.activateCoordinatesOnClick()
+    this.deactivateLayerFeatureSelection()
   }
 
-  confirmAddReport(){
+  confirmAddReport() {
     this.presentReportModal()
     this.isPointSelected = false;
 
   }
 
-  cancelAddReport(){
+  cancelAddReport() {
     this.addReportMode = false;
     this.isPointSelected = false;
+
     this.deactivateCoordinatesOnClick()
+    this.activateLayerFeatureSelection()
     this.map.removeLayer(this.POINT_LAYER)
   }
 
@@ -189,12 +216,41 @@ export class MapPage implements AfterViewInit {
     }
   }
 
-  onChangeFileInput(){
+  activateLayerFeatureSelection() {
+    this.selectInteraction = new Select({
+      condition: click,
+    });
+    this.map.addInteraction(this.selectInteraction);
+    this.selectInteraction.on('select', (e: any) => {
+      if (e.selected.length !== 0) {
+        let coords = e.selected[0].values_.geometry.flatCoordinates
+        console.log(coords)
+        //this.popupContent.nativeElement.innerHTML = '<p>You clicked here:</p><code>' + '</code>';
+        this.popupOverlay.setPosition(coords);
+      } else {
+        this.popupOverlay.setPosition(undefined)
+      }
+
+      //this.isLayerFeatureSelectable = (e.selected.length !== 0) ? true : false
+    });
+  }
+
+  deactivateLayerFeatureSelection() {
+    if (this.selectInteraction) {
+      this.map.removeInteraction(this.selectInteraction)
+    }
+  }
+
+  onChangeFileInput() {
 
   }
 
-  onClickFileInputButton(){
+  onClickFileInputButton() {
 
+  }
+
+  showReportDetails(){
+    this.presentReportModal()
   }
 
   async presentReportModal() {
@@ -207,7 +263,7 @@ export class MapPage implements AfterViewInit {
     });
 
     modal.onDidDismiss().then((dataReturned) => {
-      if(dataReturned.role === "ok") {
+      if (dataReturned.role === "ok") {
         this.addReportPoint(this.currentCoords as [number, number])
         this.cancelAddReport()
       } else if (dataReturned.role === "cancel") {
@@ -218,8 +274,26 @@ export class MapPage implements AfterViewInit {
     return await modal.present();
   }
 
-  
-  
+  async presentReportDetailsModal() {
+    const modal = await this.modalController.create({
+      component: ReportDetailsModal,
+      cssClass: "report-modal",
+      componentProps: {
+
+      }
+    });
+
+    modal.onDidDismiss().then((dataReturned) => {
+      if (dataReturned.role === "ok") {
+       
+      } else if (dataReturned.role === "cancel") {
+
+      }
+    })
+
+    return await modal.present();
+  }
+
 }
 
 
