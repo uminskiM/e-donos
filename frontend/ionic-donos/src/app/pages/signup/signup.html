@@ -16,8 +16,8 @@
   <form #signupForm="ngForm" novalidate>
     <ion-list lines="none">
       <ion-item>
-        <ion-label position="stacked" color="primary">Nazwa użytkownika</ion-label>
-        <ion-input [(ngModel)]="signup.email" name="username" type="text" #email="ngModel" required>
+        <ion-label position="stacked" color="primary">Email użytkownika</ion-label>
+        <ion-input [(ngModel)]="signup.email" name="email" type="text" #email="ngModel" required>
         </ion-input>
       </ion-item>
       <ion-text color="danger">
@@ -26,7 +26,19 @@
         </p>
       </ion-text>
 
-      
+      <ion-item>
+        <ion-label position="stacked" color="primary">Imię</ion-label>
+        <ion-input [(ngModel)]="signup.name" name="name" type="text" #name="ngModel" required>
+        </ion-input>
+      </ion-item>
+    
+
+      <ion-item>
+        <ion-label position="stacked" color="primary">Nazwisko</ion-label>
+        <ion-input [(ngModel)]="signup.surname" name="surname" type="text" #surname="ngModel" required>
+        </ion-input>
+      </ion-item>
+
 
       <ion-item>
         <ion-label position="stacked" color="primary">Hasło</ion-label>
@@ -38,6 +50,11 @@
           Hasło jest wymagane
         </p>
       </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked" color="primary">Urzędnik</ion-label>
+        <ion-toggle [(ngModel)]="signup.is_official" name="is_official" type="is_official" #is_official="ngModel" required></ion-toggle>
+      </ion-item>
     </ion-list>
 
     <div class="ion-padding">

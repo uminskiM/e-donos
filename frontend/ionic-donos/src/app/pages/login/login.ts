@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { UserData } from '../../providers/user-data';
-
+import { AuthService } from '../../services/auth.service';
 import { UserOptions } from '../../interfaces/user-options';
-
 
 
 @Component({
@@ -22,8 +21,9 @@ export class LoginPage {
   submitted = false;
 
   constructor(
+    private authService: AuthService    ,
     public userData: UserData,
-    public router: Router
+    public router: Router,
   ) { }
 
   onLogin(form: NgForm) {
@@ -31,7 +31,20 @@ export class LoginPage {
 
     if (form.valid) {
       this.userData.login(this.login.email);
-      this.router.navigateByUrl('/app/tabs/map');
+
+      const loginData = {
+        'email': this.login.email,
+        'password': this.login.password
+      }
+
+      this.authService.postLogin(loginData)
+      .subscribe((success) => {
+        console.log("SUCCESS POST")
+        this.router.navigateByUrl('/app/tabs/map');
+      },
+      (error) => {
+        console.log("WRONG POST")
+      });
     }
   }
 
