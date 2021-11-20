@@ -30,3 +30,9 @@ class Spot(models.Model):
     reporter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
 
 
+    def perform_create(self, serializer):
+        serializer.save(user = self.request.user)
+
+
+    def perform_update(self, serializer):
+        serializer.save(user = self.request.user)

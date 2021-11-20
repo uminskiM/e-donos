@@ -7,13 +7,8 @@ class SpotSerializer(serializers.ModelSerializer):
     longitude = serializers.DecimalField(required=True, min_value=-180, max_value=180, max_digits=11, decimal_places=8)
     category = serializers.CharField(required=True)
     comment = serializers.CharField(required=True, max_length=512)
-    reporter_id = serializers.IntegerField(required=True)
 
     class Meta:
         model = Spot
-        fields = {'latitude', 'longitude', 'category', 'comment', 'reporter_id'}
+        fields = ['latitude', 'longitude', 'category', 'comment']
 
-    def create(self, validated_data):
-        instance = self.Meta.model(**validated_data)
-        instance.save()
-        return instance
