@@ -41,6 +41,10 @@
         <ion-label>{{ layer.name }}</ion-label>
         <ion-checkbox slot="start" [checked]="layer.checked" (ionChange)=layerStatusChanged(layer)></ion-checkbox>
       </ion-item>
+      <ion-item>
+        <ion-label>Ortofotomapa</ion-label>
+        <ion-checkbox slot="start" [checked]="ortofotoLayerVisibility" (ionChange)=ortofotoStatusChanged()></ion-checkbox>
+      </ion-item>
     </ion-list>
   </ion-content>
 </ion-menu>

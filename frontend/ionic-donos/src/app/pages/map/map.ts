@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { MenuController, ModalController, Platform } from '@ionic/angular';
 import { DOCUMENT } from '@angular/common';
 import Map from 'ol/Map';
@@ -43,7 +43,7 @@ import { HttpService } from '../../services/http.service';
   templateUrl: 'map.html',
   styleUrls: ['./map.scss']
 })
-export class MapPage implements AfterViewInit {
+export class MapPage implements AfterViewInit, OnDestroy {
 
   map: any;
   addReportModal: any;
@@ -60,6 +60,8 @@ export class MapPage implements AfterViewInit {
   selectInteraction: any;
   popupOverlay: any;
   legendLayers = WmsLayersLegend
+  wmsLayers = WmsLayers
+  ortofotoLayerVisibility = true;
 
   @ViewChild('popup')
   popupElem!: ElementRef;
@@ -77,7 +79,7 @@ export class MapPage implements AfterViewInit {
 
   ngAfterViewInit() {
 
-    proj4.defs("EPSG:2180","+axis=neu +proj=tmerc +lat_0=0 +lon_0=19 +k=0.9993 +x_0=500000 +y_0=-5300000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+    proj4.defs("EPSG:2180", "+axis=neu +proj=tmerc +lat_0=0 +lon_0=19 +k=0.9993 +x_0=500000 +y_0=-5300000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 
     register(proj4);
 
@@ -113,7 +115,9 @@ export class MapPage implements AfterViewInit {
 
       this.map.addOverlay(this.popupOverlay)
 
-      this.initializeWmsLayers()
+      if (WmsLayers.length === 0) {
+        this.initializeWmsLayers()
+      }
 
       this.activateLayerFeatureSelection()
 
@@ -128,7 +132,9 @@ export class MapPage implements AfterViewInit {
       }, 400);
 
     });
+  }
 
+  ngOnDestroy() {
 
   }
 
@@ -313,15 +319,17 @@ export class MapPage implements AfterViewInit {
   /* WMS */
 
   initializeWmsLayers() {
+
+
     this.addWmsLayer('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow', { name: "EGIB", wmsName: "obreby,geoportal,uzytki,dzialki,numery_dzialek,budynki,kontury", visible: false, version: "1.1.0" })
     this.addWmsLayer('https://wody.isok.gov.pl/gpservices/KZGW/MRP20_SkutkiZycieZdrowiePotencjalneStraty_WysokiePrawdopodPowodzi/MapServer/WMSServer', { name: "Obszary szczelnego ryzyka", wmsName: "4", visible: false, version: "1.1.1" })
-    this.addWmsLayer('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaUzbrojeniaTerenu', { name: "Uzbrojenia", wmsName: "przewod_pozostale,przewod_naftowy,przewod_elektroenergetyczny,przewod_telekomunikacyjny,przewod_gazowy,przewod_cieplowniczy,przewod_kanalizacyjny,przewod_wodociagowy,przewod_urzadzenia,przewod_slupy,przewod_inny,przewod_benzynowy", visible: false, version: "1.3.0" })
+    this.addWmsLayer('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaUzbrojeniaTerenu', { name: "Uzbrojenia", wmsName: "przewod_pozostale,przewod_naftowy,przewod_elektroenergetyczny,przewod_telekomunikacyjny,przewod_gazowy,przewod_cieplowniczy,przewod_kanalizacyjny,przewod_wodociagowy,przewod_urzadzenia,przewod_slupy,przewod_inny,przewod_benzynowy", visible: false, version: "1.1.0" })
     this.addWmsLayer('https://wody.isok.gov.pl/gpservices/KZGW/MRP20_SkutkiZycieZdrowiePotencjalneStraty_WysokiePrawdopodPowodzi/MapServer/WMSServer', { name: "Ryzyko powodziowe", wmsName: "1", visible: false, version: "1.1.1" })
     this.addWmsLayer('https://mapy.geoportal.gov.pl/wss/ext/KrajowaIntegracjaMiejscowychPlanowZagospodarowaniaPrzestrzennego', { name: "MPZP", wmsName: "plany,raster,wektor-str,wektor-lzb,wektor-pow,wektor-lin,wektor-pkt,granice", visible: false, version: "1.1.0" })
     this.addWmtsLayer()
 
     let wmsLayerGroup = new LayerGroup({
-      layers: WmsLayers
+      layers: this.wmsLayers
     })
     wmsLayerGroup.setProperties({
       layerName: this.WMS_LAYERS_NAME
@@ -339,7 +347,7 @@ export class MapPage implements AfterViewInit {
           'FORMAT': "image/png",
           'VERSION': layerParams.version,
           "LAYERS": layerParams.wmsName,
-          "CRS": "EPSG:2180"
+          "SRS": "EPSG:2180"
         }
       }),
       visible: layerParams.visible,
@@ -349,45 +357,54 @@ export class MapPage implements AfterViewInit {
     newLayer.setProperties({
       'layerName': layerParams.name
     })
-    WmsLayers.push(newLayer)
+    this.wmsLayers.push(newLayer)
 
-    WmsLayersLegend.push({
+    this.legendLayers.push({
       name: layerParams.name,
       checked: layerParams.visible,
       zIndex: this.zIndex,
-      wmsLayersIndex: WmsLayers.length - 1,
+      wmsLayersIndex: this.wmsLayers.length - 1,
     })
   }
-  
+
   addWmtsLayer() {
     var parser = new WMTSCapabilities();
-    fetch('https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMTS/HighResolution?SERVICE=WMTS&REQUEST=getcapabilities').then(response=> {
+    fetch('https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMTS/HighResolution?SERVICE=WMTS&REQUEST=getcapabilities').then(response => {
       return response.text();
-        }).then(text=> {
-          var result = parser.read(text);
-          var options = optionsFromCapabilities(result, {
-              layer : "ORTOFOTOMAPA",
-              matrixSet: 'EPSG:2180',
-               style : 'default',
-              });
-          if (options) {
-            options.urls[0]=options.urls[0].replace('http:','https:');
-            var mySource=new WMTS(options);
-            var myLayer = new TileLayer({source : mySource,
-                preload: Infinity,
-            })
-            myLayer.setZIndex(0)
-            //this.map.addLayer(myLayer)
-            //WmsLayers.push(myLayer)
-            //WmsLayersLegend.push()           
-          }
-         });
+    }).then(text => {
+      var result = parser.read(text);
+      var options = optionsFromCapabilities(result, {
+        layer: "ORTOFOTOMAPA",
+        matrixSet: 'EPSG:2180',
+        style: 'default',
+      });
+      if (options) {
+        options.urls[0] = options.urls[0].replace('http:', 'https:');
+        var mySource = new WMTS(options);
+        var myLayer = new TileLayer({
+          source: mySource,
+          preload: Infinity,
+          visible: this.ortofotoLayerVisibility
+        })
+        myLayer.setZIndex(0)
+        this.map.addLayer(myLayer)
+        //WmsLayers.push(myLayer)
+        //WmsLayersLegend.push()           
+      }
+    });
+  }
+
+  ortofotoStatusChanged() {
+    this.ortofotoLayerVisibility = !this.ortofotoLayerVisibility
+    this.map.getLayers().array_[2].values_.visible = this.ortofotoLayerVisibility
+    this.map.updateSize()
+
   }
 
   layerStatusChanged(layer: any) {
     layer.checked = !layer.checked
 
-    WmsLayers[layer.wmsLayersIndex]['values_']['visible'] = layer.checked
+    this.wmsLayers[layer.wmsLayersIndex]['values_']['visible'] = layer.checked
     this.map.updateSize()
   }
 
