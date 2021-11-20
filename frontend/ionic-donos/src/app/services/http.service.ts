@@ -20,7 +20,7 @@ export class HttpService {
   }
 
   addSpot(spotBody: SpotRequestBody){
-    return this.http.post<any>(`${environment.serverUrl}/spots`, spotBody)
+    return this.http.post<any>(`${environment.serverUrl}/spots/`, spotBody)
   }
 
 

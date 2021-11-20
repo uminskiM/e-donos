@@ -61,7 +61,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   popupOverlay: any;
   legendLayers = WmsLayersLegend
   wmsLayers = WmsLayers
-  ortofotoLayerVisibility = true;
+  ortofotoLayerVisibility = false;
 
   @ViewChild('popup')
   popupElem!: ElementRef;
@@ -279,7 +279,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
       component: ReportModal,
       cssClass: "report-modal",
       componentProps: {
-
+        coords: this.currentCoords
       }
     });
 

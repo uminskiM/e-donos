@@ -6,11 +6,13 @@ import { MapPage } from './map';
 import { MapPageRoutingModule } from './map-routing.module';
 import { ReportModal } from './report-modal/report-modal';
 import { ReportDetailsModal } from './report-details-modal /report-details-modal';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [
     CommonModule,
     IonicModule,
+    FormsModule,
     MapPageRoutingModule
   ],
   declarations: [

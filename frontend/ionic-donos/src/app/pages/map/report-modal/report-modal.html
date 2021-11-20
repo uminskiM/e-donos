@@ -11,20 +11,14 @@
   <ion-list lines="full" class="ion-no-margin ion-no-padding">
 
     <ion-item>
-      <ion-label position="stacked">Tytuł zgłoszenia</ion-label>
-      <ion-input value=""></ion-input>
-    </ion-item>
-
-    <ion-item>
       <ion-label position="stacked">Opis</ion-label>
-      <ion-textarea value=""></ion-textarea>
+      <ion-textarea [(ngModel)]="desc"></ion-textarea>
     </ion-item>
 
     <ion-item>
       <ion-label position="stacked">Rodzaj zgłoszenia</ion-label>
-      <ion-select placeholder="Wybierz...">
-        <ion-select-option value="f">Female</ion-select-option>
-        <ion-select-option value="m">Male</ion-select-option>
+      <ion-select placeholder="Wybierz..." [(ngModel)]="category">
+        <ion-select-option *ngFor="let item of categoriesDisplay">{{item}}</ion-select-option>
       </ion-select>
     </ion-item>
 
