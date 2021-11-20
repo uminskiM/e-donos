@@ -6,8 +6,6 @@ import { UserData } from '../../providers/user-data';
 
 import { UserOptions } from '../../interfaces/user-options';
 import { AuthService } from '../../services/auth.service';
-import { FormGroup, FormBuilder } from "@angular/forms";
-import { BooleanValueAccessor } from '@ionic/angular';
 
 
 @Component({
@@ -22,21 +20,13 @@ export class SignupPage {
    password: '',
    is_official: false };
   submitted = false;
-  userForm: FormGroup;
 
 
   constructor(
     public router: Router,
     public userData: UserData,
-    public formBuilder: FormBuilder,
-    private zone: NgZone,
     private authService: AuthService    
   ) {
-      this.userForm = this.formBuilder.group({
-      name: [''],
-      email: [''],
-      username: ['']
-    })
   }
 
   onSignup(form: NgForm) { 
@@ -46,16 +36,14 @@ export class SignupPage {
       this.userData.signup(this.signup.email);
 
       this.authService.createUser(this.signup)
-      .subscribe((response) => {
-        this.zone.run(() => {
-          this.userForm.reset();
-          this.router.navigate(['/list']);
-        })
+      .subscribe((success) => {
+        console.log("SUCCESS POST")
+        this.router.navigateByUrl('/app/tabs/map');
+      },
+      (error) => {
+        console.log("WRONG POST")
       });
-  }
-
-
-      this.router.navigateByUrl('/app/tabs/map');
     }
+  }
   
 }

@@ -22,26 +22,15 @@
       </div>
       <br>
     </ion-item>
+
+    <ion-item lines="none">
+      <img id="photo" width="300" [src]="pictureUrl">
+    </ion-item>
+
+    <ion-item lines="none">
+      <br>
+      <ion-button expand="block" type="submit" (click)="ok()">OK</ion-button>
+    </ion-item>
   </ion-list>
-
-  <div class="ion-padding">
-    <ion-grid>
-      <ion-row>
-        <ion-col text-center>
-          <img id="photo" width="300" [src]="pictureUrl">
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>
-
-  <div class="ion-padding">
-    <ion-grid>
-      <ion-row>
-        <ion-col text-center>
-          <ion-button expand="block" type="submit" (click)="ok()">OK</ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>
 
 </ion-content>

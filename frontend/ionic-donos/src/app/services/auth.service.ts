@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { LocalStorageService } from '../services/local-storage.service';
 import { tap, catchError, map, mapTo } from 'rxjs/operators';
 import { BehaviorSubject, of as observableOf } from 'rxjs';
+
+
 
 import { UserOptions } from '../interfaces/user-options';
 @Injectable({
@@ -25,6 +27,7 @@ export class AuthService {
         headers: new HttpHeaders({'Content-Type': 'application/json'})
       };
     }
+
 
   createUser(user: UserOptions): Observable<any> {
     console.log("USER ", user)
@@ -69,6 +72,13 @@ export class AuthService {
   }
 
 
+  postLogin(user: any): Observable<any> {
+    return this.httpClient.post<any>(`${this.endpoint}/login/`, JSON.stringify(user), this._httpOptions)
+      .pipe(
+        catchError(this.handleError<UserOptions>('Error occured'))
+      );
+  }
+
   getUser(id): Observable<UserOptions[]> {
     return this.httpClient.get<UserOptions[]>(`${this.endpoint}/user/${id}`)
       .pipe(
@@ -112,12 +122,11 @@ export class AuthService {
       );
   }
 
-
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.error(error);
       console.log(`${operation} failed: ${error.message}`);
-      return of(result as T);
+      return throwError(error);
     };
   }  
   
