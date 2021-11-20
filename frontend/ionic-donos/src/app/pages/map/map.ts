@@ -31,6 +31,7 @@ import Select from 'ol/interaction/Select';
 import { click } from 'ol/events/condition';
 import Overlay from 'ol/Overlay';
 import { ReportDetailsModal } from './report-details-modal /report-details-modal';
+import { LayerMapParams, WmsLayers, WmsLayersLegend } from '../../const/BaseLayers';
 
 
 @Component({
@@ -44,12 +45,17 @@ export class MapPage implements AfterViewInit {
   addReportModal: any;
   addReportMode = false;
   isPointSelected = false;
-  currentCoords = [0, 0]
+  currentCoords = [0, 0];
+  WMS_LAYERS_NAME = 'wmsLayers'
+  zIndex = 1
+
+
 
   public POINT_LAYER: any;
   coordinatesOnClickEvent: (evt: any) => void;
   selectInteraction: any;
   popupOverlay: any;
+  legendLayers = WmsLayersLegend
 
   @ViewChild('popup')
   popupElem!: ElementRef;
@@ -101,6 +107,8 @@ export class MapPage implements AfterViewInit {
       });
 
       this.map.addOverlay(this.popupOverlay)
+
+      this.initializeWmsLayers()
 
       this.activateLayerFeatureSelection()
     }, 500);
@@ -294,6 +302,62 @@ export class MapPage implements AfterViewInit {
     return await modal.present();
   }
 
+
+  /* WMS */
+
+  initializeWmsLayers() {
+    this.addWmsLayer('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow', { name: "EGIB", wmsName: "obreby,geoportal,uzytki,dzialki,numery_dzialek,budynki,kontury", visible: true, version: "1.1.0"})
+    this.addWmsLayer('https://wody.isok.gov.pl/gpservices/KZGW/MRP20_SkutkiZycieZdrowiePotencjalneStraty_WysokiePrawdopodPowodzi/MapServer/WMSServer', { name: "Obszary szczelnego ryzyka", wmsName: "4", visible: true, version: "1.1.1"})
+    this.addWmsLayer('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaUzbrojeniaTerenu', { name: "Uzbrojenia", wmsName: "przewod_pozostale,przewod_naftowy,przewod_elektroenergetyczny,przewod_telekomunikacyjny,przewod_gazowy,przewod_cieplowniczy,przewod_kanalizacyjny,przewod_wodociagowy,przewod_urzadzenia,przewod_slupy,przewod_inny,przewod_benzynowy", visible: true, version: "1.3.0"})
+    this.addWmsLayer('https://wody.isok.gov.pl/gpservices/KZGW/MRP20_SkutkiZycieZdrowiePotencjalneStraty_WysokiePrawdopodPowodzi/MapServer/WMSServer', { name: "Ryzyko powodziowe", wmsName: "1", visible: true, version: "1.1.1"})
+    this.addWmsLayer('https://mapy.geoportal.gov.pl/wss/ext/KrajowaIntegracjaMiejscowychPlanowZagospodarowaniaPrzestrzennego', { name: "MPZP", wmsName: "plany,raster,wektor-str,wektor-lzb,wektor-pow,wektor-lin,wektor-pkt,granice", visible: true, version: "1.3.0"})
+
+
+    let wmsLayerGroup = new LayerGroup({
+      layers: WmsLayers
+    })
+    wmsLayerGroup.setProperties({
+      layerName: this.WMS_LAYERS_NAME
+    })
+
+    console.log(wmsLayerGroup)
+    this.map.addLayer(wmsLayerGroup)
+  }
+
+  addWmsLayer(url: string, layerParams: LayerMapParams) {
+    var newLayer = new ImageLayer({
+      source: new ImageWMS({
+        url: url,
+        params: {
+          'FORMAT': "image/png",
+          'VERSION': layerParams.version,
+          "LAYERS": layerParams.wmsName,
+        }
+      }),
+      visible: layerParams.visible,
+      zIndex: ++this.zIndex
+
+    })
+    newLayer.setProperties({
+      'layerName': layerParams.name
+    })
+    WmsLayers.push(newLayer)
+
+    WmsLayersLegend.push({
+      name: layerParams.name,
+      checked: layerParams.visible,
+      zIndex: this.zIndex,
+      wmsLayersIndex: WmsLayers.length - 1,
+    })
+  }
+
+  layerStatusChanged(layer: any){
+    layer.checked = !layer.checked
+
+    WmsLayers[layer.wmsLayersIndex]['values_']['visible'] = layer.checked
+    this.map.updateSize()
+   
+  }
 }
 
 
