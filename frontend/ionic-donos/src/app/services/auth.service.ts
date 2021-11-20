@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 import { UserOptions } from '../interfaces/user-options';
@@ -14,7 +14,9 @@ export class AuthService {
   endpoint = 'http://localhost:8000/user/';
 
   httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    headers: new HttpHeaders({ 'Content-Type': 'application/json',
+     'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM3Mzc1MzcxLCJqdGkiOiJhN2QyNzU2OGFhYWY0ZGVhYjMyOTE2MjRkOTI1ODM4ZiIsInVzZXJfaWQiOjN9.WMS1XNrXe078TQov0jGF8SRFdpsVvTK1t3zcU7eM4RM'
+    })
   };
 
   constructor(private httpClient: HttpClient) { }
@@ -22,6 +24,13 @@ export class AuthService {
   createUser(user: UserOptions): Observable<any> {
     console.log("USER ", user)
     return this.httpClient.post<UserOptions>(this.endpoint, JSON.stringify(user), this.httpOptions)
+      .pipe(
+        catchError(this.handleError<UserOptions>('Error occured'))
+      );
+  }
+
+  postLogin(user: any): Observable<any> {
+    return this.httpClient.post<any>('http://localhost:8000/login/', JSON.stringify(user), this.httpOptions)
       .pipe(
         catchError(this.handleError<UserOptions>('Error occured'))
       );
@@ -59,12 +68,11 @@ export class AuthService {
       );
   }
 
-
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.error(error);
       console.log(`${operation} failed: ${error.message}`);
-      return of(result as T);
+      return throwError(error);
     };
   }  
   
