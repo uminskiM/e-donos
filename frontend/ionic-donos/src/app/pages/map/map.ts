@@ -10,6 +10,9 @@ import { register } from 'ol/proj/proj4';
 import Projection from 'ol/proj/Projection';
 import proj4 from 'proj4';
 
+import WMTS, { optionsFromCapabilities } from 'ol/source/WMTS';
+import WMTSCapabilities from 'ol/format/WMTSCapabilities';
+
 import LayerGroup from 'ol/layer/Group';
 import ImageLayer from 'ol/layer/Image';
 import ImageWMS from 'ol/source/ImageWMS';
@@ -32,6 +35,7 @@ import { click } from 'ol/events/condition';
 import Overlay from 'ol/Overlay';
 import { ReportDetailsModal } from './report-details-modal /report-details-modal';
 import { LayerMapParams, WmsLayers, WmsLayersLegend } from '../../const/BaseLayers';
+import { HttpService } from '../../services/http.service';
 
 
 @Component({
@@ -67,13 +71,14 @@ export class MapPage implements AfterViewInit {
     private menu: MenuController,
     private modalController: ModalController,
     public platform: Platform,
-    private mediaObserver: MediaObserver
+    private mediaObserver: MediaObserver,
+    private httpService: HttpService
   ) { }
 
   ngAfterViewInit() {
 
-    proj4.defs('EPSG:2180',
-      '+proj=tmerc +lat_0=0 +lon_0=19 +k=0.9993 +x_0=500000 +y_0=-5300000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+    proj4.defs("EPSG:2180","+axis=neu +proj=tmerc +lat_0=0 +lon_0=19 +k=0.9993 +x_0=500000 +y_0=-5300000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+
     register(proj4);
 
     var myProjection = new Projection({
@@ -111,6 +116,8 @@ export class MapPage implements AfterViewInit {
       this.initializeWmsLayers()
 
       this.activateLayerFeatureSelection()
+
+      this.getSpots()
     }, 500);
 
 
@@ -257,7 +264,7 @@ export class MapPage implements AfterViewInit {
 
   }
 
-  showReportDetails(){
+  showReportDetails() {
     this.presentReportModal()
   }
 
@@ -293,7 +300,7 @@ export class MapPage implements AfterViewInit {
 
     modal.onDidDismiss().then((dataReturned) => {
       if (dataReturned.role === "ok") {
-       
+
       } else if (dataReturned.role === "cancel") {
 
       }
@@ -306,12 +313,12 @@ export class MapPage implements AfterViewInit {
   /* WMS */
 
   initializeWmsLayers() {
-    this.addWmsLayer('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow', { name: "EGIB", wmsName: "obreby,geoportal,uzytki,dzialki,numery_dzialek,budynki,kontury", visible: true, version: "1.1.0"})
-    this.addWmsLayer('https://wody.isok.gov.pl/gpservices/KZGW/MRP20_SkutkiZycieZdrowiePotencjalneStraty_WysokiePrawdopodPowodzi/MapServer/WMSServer', { name: "Obszary szczelnego ryzyka", wmsName: "4", visible: true, version: "1.1.1"})
-    this.addWmsLayer('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaUzbrojeniaTerenu', { name: "Uzbrojenia", wmsName: "przewod_pozostale,przewod_naftowy,przewod_elektroenergetyczny,przewod_telekomunikacyjny,przewod_gazowy,przewod_cieplowniczy,przewod_kanalizacyjny,przewod_wodociagowy,przewod_urzadzenia,przewod_slupy,przewod_inny,przewod_benzynowy", visible: true, version: "1.3.0"})
-    this.addWmsLayer('https://wody.isok.gov.pl/gpservices/KZGW/MRP20_SkutkiZycieZdrowiePotencjalneStraty_WysokiePrawdopodPowodzi/MapServer/WMSServer', { name: "Ryzyko powodziowe", wmsName: "1", visible: true, version: "1.1.1"})
-    this.addWmsLayer('https://mapy.geoportal.gov.pl/wss/ext/KrajowaIntegracjaMiejscowychPlanowZagospodarowaniaPrzestrzennego', { name: "MPZP", wmsName: "plany,raster,wektor-str,wektor-lzb,wektor-pow,wektor-lin,wektor-pkt,granice", visible: true, version: "1.1.0"})
-
+    this.addWmsLayer('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow', { name: "EGIB", wmsName: "obreby,geoportal,uzytki,dzialki,numery_dzialek,budynki,kontury", visible: false, version: "1.1.0" })
+    this.addWmsLayer('https://wody.isok.gov.pl/gpservices/KZGW/MRP20_SkutkiZycieZdrowiePotencjalneStraty_WysokiePrawdopodPowodzi/MapServer/WMSServer', { name: "Obszary szczelnego ryzyka", wmsName: "4", visible: false, version: "1.1.1" })
+    this.addWmsLayer('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaUzbrojeniaTerenu', { name: "Uzbrojenia", wmsName: "przewod_pozostale,przewod_naftowy,przewod_elektroenergetyczny,przewod_telekomunikacyjny,przewod_gazowy,przewod_cieplowniczy,przewod_kanalizacyjny,przewod_wodociagowy,przewod_urzadzenia,przewod_slupy,przewod_inny,przewod_benzynowy", visible: false, version: "1.3.0" })
+    this.addWmsLayer('https://wody.isok.gov.pl/gpservices/KZGW/MRP20_SkutkiZycieZdrowiePotencjalneStraty_WysokiePrawdopodPowodzi/MapServer/WMSServer', { name: "Ryzyko powodziowe", wmsName: "1", visible: false, version: "1.1.1" })
+    this.addWmsLayer('https://mapy.geoportal.gov.pl/wss/ext/KrajowaIntegracjaMiejscowychPlanowZagospodarowaniaPrzestrzennego', { name: "MPZP", wmsName: "plany,raster,wektor-str,wektor-lzb,wektor-pow,wektor-lin,wektor-pkt,granice", visible: false, version: "1.1.0" })
+    this.addWmtsLayer()
 
     let wmsLayerGroup = new LayerGroup({
       layers: WmsLayers
@@ -332,7 +339,7 @@ export class MapPage implements AfterViewInit {
           'FORMAT': "image/png",
           'VERSION': layerParams.version,
           "LAYERS": layerParams.wmsName,
-          "CRS":"EPSG:2180"
+          "CRS": "EPSG:2180"
         }
       }),
       visible: layerParams.visible,
@@ -351,13 +358,47 @@ export class MapPage implements AfterViewInit {
       wmsLayersIndex: WmsLayers.length - 1,
     })
   }
+  
+  addWmtsLayer() {
+    var parser = new WMTSCapabilities();
+    fetch('https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMTS/HighResolution?SERVICE=WMTS&REQUEST=getcapabilities').then(response=> {
+      return response.text();
+        }).then(text=> {
+          var result = parser.read(text);
+          var options = optionsFromCapabilities(result, {
+              layer : "ORTOFOTOMAPA",
+              matrixSet: 'EPSG:2180',
+               style : 'default',
+              });
+          if (options) {
+            options.urls[0]=options.urls[0].replace('http:','https:');
+            var mySource=new WMTS(options);
+            var myLayer = new TileLayer({source : mySource,
+                preload: Infinity,
+            })
+            myLayer.setZIndex(0)
+            //this.map.addLayer(myLayer)
+            //WmsLayers.push(myLayer)
+            //WmsLayersLegend.push()           
+          }
+         });
+  }
 
-  layerStatusChanged(layer: any){
+  layerStatusChanged(layer: any) {
     layer.checked = !layer.checked
 
     WmsLayers[layer.wmsLayersIndex]['values_']['visible'] = layer.checked
     this.map.updateSize()
-   
+  }
+
+  getSpots() {
+    this.httpService.getSpots().subscribe(
+      results => {
+        console.log(results)
+      },
+      error => {
+        console.error
+      })
   }
 }
 
