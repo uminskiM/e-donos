@@ -18,4 +18,5 @@ class SpotSerializer(serializers.ModelSerializer):
 
     def get_reporter_is_official(self, obj):
         return obj.reporter.is_official
+
       
